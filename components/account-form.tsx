@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { Database } from "../types/supabase";
+import { Database } from "../app/types/supabase";
 import {
   Session,
   createClientComponentClient,

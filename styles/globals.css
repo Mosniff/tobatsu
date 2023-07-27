@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --tobatsu-color-1: #000000;
+    --tobatsu-color-2: #ffffff;
+    --tobatsu-color-3: #c4c4c4;
+    --tobatsu-color-4: #46acc2;
+    --tobatsu-color-5: #087f8c;
+  }
+}

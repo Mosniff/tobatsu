@@ -1,13 +1,19 @@
 import Header from "@/components/header";
 
-export default function HomePage() {
+export const metadata = {
+  title: "Tobatsu - Manager",
+};
+
+export default function GymManagerLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <Header />
       <main className="min-h-screen bg-background flex flex-col items-center">
-        <div className="row">
-          <div className="col-6">home page</div>
-        </div>
+        {children}
       </main>
     </>
   );
