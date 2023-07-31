@@ -17,7 +17,11 @@ const GymManagementPage = async () => {
 
   console.log(user.id);
 
-  return <GymManagementPresentational userId={user.id} />;
+  return (
+    <main className="min-h-screen bg-background flex flex-col items-center">
+      <GymManagementPresentational userId={user.id} />
+    </main>
+  );
 };
 
 export default GymManagementPage;

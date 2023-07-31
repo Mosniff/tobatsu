@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 
 type Props = {
   userId: string;
@@ -40,7 +41,9 @@ function GymManagementPresentational({ userId }: Props) {
           {managedGyms.length > 0 && (
             <ul className="my-auto">
               {managedGyms.map((gym) => (
-                <li>{gym.name}</li>
+                <Link href={`/gym-management/${gym.id}`}>
+                  <li>{gym.name}</li>
+                </Link>
               ))}
             </ul>
           )}

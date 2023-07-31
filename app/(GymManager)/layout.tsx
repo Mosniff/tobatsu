@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/layout/header";
 
 export const metadata = {
   title: "Tobatsu - Manager",
@@ -12,9 +12,7 @@ export default function GymManagerLayout({
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-background flex flex-col items-center">
-        {children}
-      </main>
+      {children}
     </>
   );
 }
