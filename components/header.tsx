@@ -27,8 +27,11 @@ const Header = () => {
               <Link href="/account">Profile</Link>
             </div>
             <div className="px-4 py-2">
+              <Link href="/gym-management">Manage Gym</Link>
+            </div>
+            <div className="px-4 py-2">
               <form action="/auth/signout" method="post">
-                <button type="submit">Sign out</button>
+                <button type="submit">Log out</button>
               </form>
             </div>
           </div>
