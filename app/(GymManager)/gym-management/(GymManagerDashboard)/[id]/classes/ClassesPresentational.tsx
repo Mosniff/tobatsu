@@ -8,6 +8,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import CreateClassModal from "@/components/modals/CreateClassModal";
+import ClassRegisterModal from "@/components/modals/ClassRegisterModal";
 
 type Props = {};
 
@@ -16,8 +17,11 @@ function ClassesPresentational({}: Props) {
   const gymId = useParams().id as string;
   const [loading, setLoading] = useState<boolean>(true);
   const [scheduledClasses, setScheduledClasses] = useState<any[]>([]);
-  const [createClassModalOpen, setCreateClassModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<null | Date>(null);
+  const [selectedClassId, setSelectedClassId] = useState<string>("");
+  const [gymMembers, setGymMembers] = useState<any[]>([]);
+  const [createClassModalOpen, setCreateClassModalOpen] = useState(false);
+  const [classRegisterModalOpen, setClassRegisterModalOpen] = useState(false);
 
   const fetchScheduledClasses = async () => {
     const { data, error } = await supabase
@@ -35,7 +39,21 @@ function ClassesPresentational({}: Props) {
           };
         })
       );
-      setLoading(false);
+    }
+
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchGymMembers = async () => {
+    const { data, error } = await supabase
+      .from("gym_members")
+      .select()
+      .eq("gym_id", gymId);
+    if (data) {
+      console.log("hi", data);
+      setGymMembers(data);
     }
 
     if (error) {
@@ -45,6 +63,8 @@ function ClassesPresentational({}: Props) {
 
   useEffect(() => {
     fetchScheduledClasses();
+    fetchGymMembers();
+    setLoading(false);
   }, []);
 
   const handleDateClick = (dateClickInfo: any) => {
@@ -54,6 +74,8 @@ function ClassesPresentational({}: Props) {
   };
   const handleEventClick = (eventClickInfo: any) => {
     console.log("event", eventClickInfo.event.extendedProps);
+    setSelectedClassId(eventClickInfo.event.extendedProps.classId);
+    setClassRegisterModalOpen(true);
   };
 
   return (
@@ -76,6 +98,13 @@ function ClassesPresentational({}: Props) {
             classDate={selectedDate || new Date()}
             gymId={gymId}
             fetchScheduledClasses={fetchScheduledClasses}
+          />
+          <ClassRegisterModal
+            modalOpen={classRegisterModalOpen}
+            closeModal={() => setClassRegisterModalOpen(false)}
+            gymMembers={gymMembers}
+            gymId={gymId}
+            classId={selectedClassId}
           />
         </>
       )}
