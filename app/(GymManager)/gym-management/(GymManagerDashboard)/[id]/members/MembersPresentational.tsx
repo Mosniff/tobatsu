@@ -21,6 +21,7 @@ function MembersPresentational({}: Props) {
         .select()
         .eq("gym_id", gymId);
       if (data) {
+        console.log("hi");
         setMembers(data);
         setLoading(false);
       }
@@ -30,7 +31,7 @@ function MembersPresentational({}: Props) {
       }
     };
     fetchMembers();
-  });
+  }, []);
 
   const closeAddMemberModal = () => {
     setAddMemberModalOpen(false);
