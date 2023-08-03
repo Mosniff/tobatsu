@@ -8,9 +8,9 @@ const SideNav = () => {
   const activeRoute = path.split("/")[3];
 
   return (
-    <nav className="bg-gray-800 w-64 h-full h-screen top-0 left-0 pt-10">
-      <div className="px-4">
-        <ul className="mt-0">
+    <nav className="bg-gray-800 w-60 h-screen top-0 left-0 py-8 px-8 text-xl">
+      <div>
+        <ul>
           <li className="mb-4">
             <Link
               className={`text-white hover:text-gray-300${

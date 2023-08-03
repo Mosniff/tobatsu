@@ -18,6 +18,8 @@ module.exports = {
         tc3: "var(--tobatsu-color-3)",
         tc4: "var(--tobatsu-color-4)",
         tc5: "var(--tobatsu-color-5)",
+        "tc-background": "var(--tobatsu-background)",
+        "tc-background-light": "var(--tobatsu-background-light)",
       },
     },
   },

@@ -12,7 +12,7 @@ export default function GymManagerDashboardLayout({
   return (
     <div className="flex">
       <SideNav />
-      <main className="min-h-screen bg-background flex flex-col items-center">
+      <main className="min-h-screen bg-tc-background w-full flex flex-col items-center">
         {children}
       </main>
     </div>

@@ -4,6 +4,18 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useParams } from "next/navigation";
 import Modal from "react-modal";
 import AddNewMemberForm from "@/components/AddNewMemberForm";
+import CollapsibleMembersList from "@/components/CollapsibleMembersList";
+import TobatsuButton from "@/components/TobatsuButton";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Button,
+} from "@mui/material/";
+import AddNewMemberModal from "@/components/modals/AddNewMemberModal";
 
 type Props = {};
 
@@ -11,62 +23,85 @@ function MembersPresentational({}: Props) {
   const supabase = createClientComponentClient();
   const gymId = useParams().id as string;
   const [loading, setLoading] = useState<boolean>(true);
+  const [gym, setGym] = useState<any>({});
   const [members, setMembers] = useState<any[]>([]);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<boolean>(false);
+  const [instructorsSectionExpanded, setInstructorsSectionExpanded] =
+    useState<boolean>(true);
+  const [studentsSectionExpanded, setStudentsSectionExpanded] =
+    useState<boolean>(true);
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      const { data, error } = await supabase
+    const fetchData = async () => {
+      const { data: gymData, error: gymDataError } = await supabase
+        .from("gyms")
+        .select()
+        .eq("id", gymId)
+        .single();
+      const { data: membersData, error: membersDataError } = await supabase
         .from("gym_members")
         .select()
         .eq("gym_id", gymId);
-      if (data) {
+      if (membersData && gymData) {
         console.log("hi");
-        setMembers(data);
+        setMembers(membersData);
+        setGym(gymData);
         setLoading(false);
       }
 
-      if (error) {
-        console.log(error);
+      if (gymDataError || membersDataError) {
+        console.log(gymDataError, membersDataError);
       }
     };
-    fetchMembers();
+    fetchData();
   }, []);
 
-  const closeAddMemberModal = () => {
+  const addNewMember = async (
+    e: any,
+    { firstName, lastName, belt, isInstructor }: any
+  ) => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.from("gym_members").insert([
+      {
+        gym_id: gymId,
+        first_name: firstName,
+        last_name: lastName,
+        belt: belt,
+        is_instructor: isInstructor,
+      },
+    ]);
+
+    console.log(data, error);
+
     setAddMemberModalOpen(false);
   };
 
   return (
-    <div>
-      <h1>Gym Members Page</h1>
+    <>
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <>
-          <h2>Instructors:</h2>
-          <ul>
-            {members.map((member) => {
-              if (member.is_instructor) {
-                return <li>{`${member.first_name} ${member.last_name}`}</li>;
-              }
-            })}
-          </ul>
-          <h2>Students:</h2>
-          <ul>
-            {members.map((member) => {
-              if (!member.is_instructor) {
-                return <li>{`${member.first_name} ${member.last_name}`}</li>;
-              }
-            })}
-          </ul>
-          <button onClick={() => setAddMemberModalOpen(true)}>
-            Add New Member
-          </button>
-          <Modal
+        <div className="flex flex-col justify-start w-full p-6">
+          <div className="flex justify-between">
+            <h1 className="text-2xl">{gym!.name} - Members</h1>
+            <TobatsuButton
+              onClick={() => setAddMemberModalOpen(true)}
+              text="Add New Member"
+            />
+          </div>
+          <CollapsibleMembersList
+            members={members.filter((member) => member.is_instructor)}
+            listName="Instructors"
+          />
+          <CollapsibleMembersList
+            members={members.filter((member) => !member.is_instructor)}
+            listName="Students"
+          />
+          {/* <Modal
+            ariaHideApp={false}
             isOpen={addMemberModalOpen}
             onRequestClose={closeAddMemberModal}
-            contentLabel="Video Modal"
             style={{
               overlay: {
                 backgroundColor: "rgba(0,0,0,0.2)",
@@ -80,13 +115,19 @@ function MembersPresentational({}: Props) {
                 overflow: "hidden",
               },
             }}
+            className="w-20 h-20"
           >
             <button onClick={() => setAddMemberModalOpen(false)}>close</button>
             <AddNewMemberForm closeModal={closeAddMemberModal} gymId={gymId} />
-          </Modal>
-        </>
+          </Modal> */}
+          <AddNewMemberModal
+            isOpen={addMemberModalOpen}
+            onClose={() => setAddMemberModalOpen(false)}
+            onSubmit={addNewMember}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

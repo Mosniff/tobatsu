@@ -4,10 +4,43 @@
 
 @layer base {
   :root {
-    --tobatsu-color-1: #000000;
+    /* --tobatsu-color-1: #000000;
     --tobatsu-color-2: #ffffff;
     --tobatsu-color-3: #c4c4c4;
     --tobatsu-color-4: #46acc2;
+    --tobatsu-color-5: #087f8c; */
+    --tobatsu-background: #2d2d2d;
+    --tobatsu-background-light: #404040;
+    --tobatsu-color-2: #266dd3;
+    --tobatsu-color-3: #c4c4c4;
+    --tobatsu-color-4: #46acc2;
     --tobatsu-color-5: #087f8c;
+  }
+
+  body {
+    color: white;
+  }
+
+  .collapsible-icon {
+    transition: all 0.25s linear;
+  }
+
+  .collapsible-icon--rotated {
+    transition: all 0.25s linear;
+    transform: rotate(90deg);
+  }
+
+  .collapsible-section {
+    overflow: hidden;
+    transition: transform 0.3s ease-out;
+    height: auto;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+
+  .collapsible-section--collapsed {
+    transform: scaleY(0);
+    transition: height 0.3s ease-out;
+    height: 0;
   }
 }
