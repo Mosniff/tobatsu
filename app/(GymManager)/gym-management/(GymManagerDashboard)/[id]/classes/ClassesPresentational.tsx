@@ -2,14 +2,11 @@
 import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useParams } from "next/navigation";
-import Modal from "react-modal";
-import AddNewMemberForm from "@/components/AddNewMemberForm";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import CreateClassModal from "@/components/modals/CreateClassModal";
 import ClassRegisterModal from "@/components/modals/ClassRegisterModal";
-import dayjs from "dayjs";
 
 function ClassesPresentational() {
   const supabase = createClientComponentClient();
@@ -17,7 +14,7 @@ function ClassesPresentational() {
   const [loading, setLoading] = useState<boolean>(true);
   const [scheduledClasses, setScheduledClasses] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<null | Date>(null);
-  const [selectedClassId, setSelectedClassId] = useState<string>("");
+  const [selectedClassId, setSelectedClassId] = useState<null | number>(null);
   const [gymMembers, setGymMembers] = useState<any[]>([]);
   const [createClassModalOpen, setCreateClassModalOpen] = useState(false);
   const [classRegisterModalOpen, setClassRegisterModalOpen] = useState(false);
@@ -110,11 +107,6 @@ function ClassesPresentational() {
             </div>
           </div>
           <CreateClassModal
-            // modalOpen={createClassModalOpen}
-            // closeModal={() => setCreateClassModalOpen(false)}
-            // classDate={selectedDate || new Date()}
-            // gymId={gymId}
-            // fetchScheduledClasses={fetchScheduledClasses}
             isOpen={createClassModalOpen}
             onClose={() => setCreateClassModalOpen(false)}
             classDate={selectedDate || new Date()}
@@ -124,9 +116,9 @@ function ClassesPresentational() {
             isOpen={classRegisterModalOpen}
             onClose={() => {
               setClassRegisterModalOpen(false);
-              setSelectedClassId("");
+              setSelectedClassId(null);
             }}
-            classId={selectedClassId}
+            classId={selectedClassId!}
             gymMembers={gymMembers}
           />
         </>

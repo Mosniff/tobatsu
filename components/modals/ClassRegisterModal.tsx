@@ -15,7 +15,7 @@ import {
 type ClassRegisterModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  classId: string;
+  classId: number;
   gymMembers: any[];
 };
 
@@ -32,31 +32,34 @@ function ClassRegisterModal({
   const [touched, setTouched] = useState<boolean>(false);
 
   const fetchScheduledClass = async () => {
-    const { data, error } = await supabase
-      .from("scheduled_classes")
-      .select("*")
-      .eq("id", classId)
-      .single();
+    if (classId) {
+      const { data, error } = await supabase
+        .from("scheduled_classes")
+        .select("*")
+        .eq("id", classId)
+        .single();
 
-    if (data) {
-      setScheduledClass(data);
-      setLoading(false);
-      console.log("ClassRegisterModal");
-    } else if (error) {
-      console.log(error);
+      if (data) {
+        setScheduledClass(data);
+        setLoading(false);
+      } else if (error) {
+        console.log(error);
+      }
     }
   };
 
   const fetchAttendingMemberIds = async () => {
-    const { data, error } = await supabase
-      .from("class_attendances")
-      .select("*")
-      .eq("scheduled_class_id", classId);
+    if (classId) {
+      const { data, error } = await supabase
+        .from("class_attendances")
+        .select("*")
+        .eq("scheduled_class_id", classId);
 
-    if (data) {
-      setAttendingMemberIds(data.map((result) => result.member_id));
-    } else if (error) {
-      console.log(error);
+      if (data) {
+        setAttendingMemberIds(data.map((result) => result.gym_member_id));
+      } else if (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -98,7 +101,9 @@ function ClassRegisterModal({
 
       setTouched(false);
       onClose();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -115,7 +120,7 @@ function ClassRegisterModal({
           </DialogTitle>
           <DialogContent>
             {gymMembers.map((member: any) => (
-              <FormControl margin="dense" fullWidth>
+              <FormControl margin="dense" fullWidth key={member.id}>
                 <FormControlLabel
                   control={
                     <Checkbox
