@@ -26,7 +26,7 @@ import {
 type AddNewMemberModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (event: any, options: any) => void;
+  onSubmit: (options: any) => void;
 };
 
 function AddNewMemberModal({
@@ -38,6 +38,13 @@ function AddNewMemberModal({
   const [lastName, setLastName] = useState<string | null>(null);
   const [belt, setBelt] = useState<string | null>(null);
   const [isInstructor, setIsInstructor] = useState<boolean>(false);
+
+  const resetModal = () => {
+    setFirstName(null);
+    setLastName(null);
+    setBelt(null);
+    setIsInstructor(false);
+  };
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
@@ -88,7 +95,6 @@ function AddNewMemberModal({
                   <Checkbox
                     checked={isInstructor}
                     onChange={(e) => {
-                      console.log(e.target.checked);
                       return e.target.checked
                         ? setIsInstructor(true)
                         : setIsInstructor(false);
@@ -105,14 +111,15 @@ function AddNewMemberModal({
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
-          onClick={(e) =>
-            onSubmit(e, {
-              first_name: firstName,
-              last_name: lastName,
-              belt: belt,
-              is_instructor: isInstructor,
-            })
-          }
+          onClick={() => {
+            onSubmit({
+              firstName,
+              lastName,
+              belt,
+              isInstructor,
+            });
+            resetModal();
+          }}
         >
           Add
         </Button>

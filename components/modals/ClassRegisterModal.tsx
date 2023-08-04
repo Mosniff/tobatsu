@@ -88,7 +88,7 @@ function ClassRegisterModal({
     try {
       // delete every class attendance
       await supabase
-        .from("scheduled_class_attendances")
+        .from("class_attendances")
         .delete()
         .eq("scheduled_class_id", classId);
 
