@@ -17,6 +17,7 @@ type ClassRegisterModalProps = {
   onClose: () => void;
   classId: number;
   gymMembers: any[];
+  sendToast: (message: string) => void;
 };
 
 function ClassRegisterModal({
@@ -24,6 +25,7 @@ function ClassRegisterModal({
   onClose,
   classId,
   gymMembers,
+  sendToast,
 }: ClassRegisterModalProps) {
   const supabase = createClientComponentClient();
   const [scheduledClass, setScheduledClass] = useState<any>(null);
@@ -85,24 +87,28 @@ function ClassRegisterModal({
   };
 
   const handleSave = async () => {
-    try {
-      // delete every class attendance
-      await supabase
-        .from("class_attendances")
-        .delete()
-        .eq("scheduled_class_id", classId);
+    // delete every class attendance
+    const { error: deleteError } = await supabase
+      .from("class_attendances")
+      .delete()
+      .eq("scheduled_class_id", classId);
 
-      // create new class attendances
-      const newAttendances = attendingMemberIds.map((memberId: string) => ({
-        gym_member_id: memberId,
-        scheduled_class_id: classId,
-      }));
-      await supabase.from("class_attendances").insert(newAttendances);
+    // create new class attendances
+    const newAttendances = attendingMemberIds.map((memberId: string) => ({
+      gym_member_id: memberId,
+      scheduled_class_id: classId,
+    }));
+    const { error: insertError } = await supabase
+      .from("class_attendances")
+      .insert(newAttendances);
 
-      setTouched(false);
-      onClose();
-    } catch (error) {
-      console.log(error);
+    setTouched(false);
+    onClose();
+    if (deleteError || insertError) {
+      console.log(deleteError, insertError);
+      sendToast("Something went wrong!");
+    } else {
+      sendToast("Register saved.");
     }
   };
 

@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import CollapsibleMembersList from "@/components/CollapsibleMembersList";
 import TobatsuButton from "@/components/TobatsuButton";
 import AddNewMemberModal from "@/components/modals/AddNewMemberModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {};
 
@@ -46,7 +48,7 @@ function MembersPresentational({}: Props) {
     belt,
     isInstructor,
   }: any) => {
-    await supabase.from("gym_members").insert([
+    const { error } = await supabase.from("gym_members").insert([
       {
         gym_id: gymId,
         first_name: firstName,
@@ -58,6 +60,13 @@ function MembersPresentational({}: Props) {
 
     fetchData();
     setAddMemberModalOpen(false);
+
+    if (error) {
+      console.log(error);
+      toast("Something went wrong!");
+    } else {
+      toast("Member added.");
+    }
   };
 
   return (
@@ -88,6 +97,7 @@ function MembersPresentational({}: Props) {
           />
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }

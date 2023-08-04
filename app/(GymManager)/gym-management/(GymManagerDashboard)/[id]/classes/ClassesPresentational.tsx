@@ -7,6 +7,8 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import CreateClassModal from "@/components/modals/CreateClassModal";
 import ClassRegisterModal from "@/components/modals/ClassRegisterModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ClassesPresentational() {
   const supabase = createClientComponentClient();
@@ -25,7 +27,6 @@ function ClassesPresentational() {
       .select()
       .eq("gym_id", gymId);
     if (data) {
-      // console.log("hi", data);
       setScheduledClasses(
         data.map((scheduledClass) => {
           return {
@@ -48,7 +49,6 @@ function ClassesPresentational() {
       .select()
       .eq("gym_id", gymId);
     if (data) {
-      // console.log("hi", data);
       setGymMembers(data);
     }
 
@@ -64,18 +64,16 @@ function ClassesPresentational() {
   }, []);
 
   const handleDateClick = (dateClickInfo: any) => {
-    // console.log(dateClickInfo.date);
     setSelectedDate(dateClickInfo.date);
     setCreateClassModalOpen(true);
   };
   const handleEventClick = (eventClickInfo: any) => {
-    // console.log("event", eventClickInfo.event.extendedProps);
     setSelectedClassId(eventClickInfo.event.extendedProps.classId);
     setClassRegisterModalOpen(true);
   };
 
   const scheduleClass = async ({ name, time, date }: any) => {
-    const { data, error } = await supabase.from("scheduled_classes").insert([
+    const { error } = await supabase.from("scheduled_classes").insert([
       {
         gym_id: gymId,
         name: name,
@@ -84,8 +82,13 @@ function ClassesPresentational() {
       },
     ]);
 
-    console.log(data, error);
-    fetchScheduledClasses();
+    if (!error) {
+      toast("Class scheduled.");
+      fetchScheduledClasses();
+    }
+    if (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -120,9 +123,11 @@ function ClassesPresentational() {
             }}
             classId={selectedClassId!}
             gymMembers={gymMembers}
+            sendToast={(message: string) => toast(message)}
           />
         </>
       )}
+      <ToastContainer />
     </>
   );
 }
