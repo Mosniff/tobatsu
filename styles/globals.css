@@ -36,11 +36,18 @@
     height: auto;
     transform: scaleY(1);
     transform-origin: top;
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2rem;
   }
 
   .collapsible-section--collapsed {
     transform: scaleY(0);
     transition: height 0.3s ease-out;
     height: 0;
+  }
+
+  .collapsible-section-item {
   }
 }

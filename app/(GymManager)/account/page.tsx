@@ -10,5 +10,9 @@ export default async function AccountPage() {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return <AccountForm session={session} />;
+  return (
+    <main className="min-h-screen bg-tc-background w-full flex flex-col items-center">
+      <AccountForm session={session} />
+    </main>
+  );
 }
