@@ -8,8 +8,8 @@ const SideNav = () => {
   const activeRoute = path.split("/")[3];
 
   return (
-    <nav className="bg-gray-800 w-60 h-screen top-0 left-0 py-8 px-8 text-xl">
-      <div>
+    <nav className="bg-gray-800 w-60 top-0 left-0 py-8 px-8 text-xl flex flex-col">
+      <div className="flex-1">
         <ul>
           <li className="mb-4">
             <Link

@@ -9,10 +9,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import CreateClassModal from "@/components/modals/CreateClassModal";
 import ClassRegisterModal from "@/components/modals/ClassRegisterModal";
+import dayjs from "dayjs";
 
-type Props = {};
-
-function ClassesPresentational({}: Props) {
+function ClassesPresentational() {
   const supabase = createClientComponentClient();
   const gymId = useParams().id as string;
   const [loading, setLoading] = useState<boolean>(true);
@@ -29,7 +28,7 @@ function ClassesPresentational({}: Props) {
       .select()
       .eq("gym_id", gymId);
     if (data) {
-      console.log("hi", data);
+      // console.log("hi", data);
       setScheduledClasses(
         data.map((scheduledClass) => {
           return {
@@ -52,7 +51,7 @@ function ClassesPresentational({}: Props) {
       .select()
       .eq("gym_id", gymId);
     if (data) {
-      console.log("hi", data);
+      // console.log("hi", data);
       setGymMembers(data);
     }
 
@@ -68,47 +67,71 @@ function ClassesPresentational({}: Props) {
   }, []);
 
   const handleDateClick = (dateClickInfo: any) => {
-    console.log(dateClickInfo.date);
+    // console.log(dateClickInfo.date);
     setSelectedDate(dateClickInfo.date);
     setCreateClassModalOpen(true);
   };
   const handleEventClick = (eventClickInfo: any) => {
-    console.log("event", eventClickInfo.event.extendedProps);
+    // console.log("event", eventClickInfo.event.extendedProps);
     setSelectedClassId(eventClickInfo.event.extendedProps.classId);
     setClassRegisterModalOpen(true);
   };
 
+  const scheduleClass = async ({ name, time, date }: any) => {
+    const { data, error } = await supabase.from("scheduled_classes").insert([
+      {
+        gym_id: gymId,
+        name: name,
+        time: time.toTimeString().slice(0, 8),
+        date: date,
+      },
+    ]);
+
+    console.log(data, error);
+    fetchScheduledClasses();
+  };
+
   return (
-    <div>
-      <h1>Gym Classes Page</h1>
+    <>
       {loading ? (
         <div>Loading...</div>
       ) : (
         <>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            events={scheduledClasses}
-            dateClick={handleDateClick}
-            eventClick={handleEventClick}
-          />
+          <div className="w-full p-6">
+            <h1 className="text-2xl">Class Schedule</h1>
+            <div className="p-20">
+              <FullCalendar
+                plugins={[dayGridPlugin, interactionPlugin]}
+                initialView="dayGridMonth"
+                events={scheduledClasses}
+                dateClick={handleDateClick}
+                eventClick={handleEventClick}
+              />
+            </div>
+          </div>
           <CreateClassModal
-            modalOpen={createClassModalOpen}
-            closeModal={() => setCreateClassModalOpen(false)}
+            // modalOpen={createClassModalOpen}
+            // closeModal={() => setCreateClassModalOpen(false)}
+            // classDate={selectedDate || new Date()}
+            // gymId={gymId}
+            // fetchScheduledClasses={fetchScheduledClasses}
+            isOpen={createClassModalOpen}
+            onClose={() => setCreateClassModalOpen(false)}
             classDate={selectedDate || new Date()}
-            gymId={gymId}
-            fetchScheduledClasses={fetchScheduledClasses}
+            scheduleClass={scheduleClass}
           />
           <ClassRegisterModal
-            modalOpen={classRegisterModalOpen}
-            closeModal={() => setClassRegisterModalOpen(false)}
-            gymMembers={gymMembers}
-            gymId={gymId}
+            isOpen={classRegisterModalOpen}
+            onClose={() => {
+              setClassRegisterModalOpen(false);
+              setSelectedClassId("");
+            }}
             classId={selectedClassId}
+            gymMembers={gymMembers}
           />
         </>
       )}
-    </div>
+    </>
   );
 }
 
