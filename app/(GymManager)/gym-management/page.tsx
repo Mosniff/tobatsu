@@ -1,9 +1,9 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import GymManagementPresentational from "./GymManagementPresentational";
+import GymManagementPage from "@/components/pages/GymManagementPage";
 
-const GymManagementPage = async () => {
+const Page = async () => {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -15,13 +15,7 @@ const GymManagementPage = async () => {
     redirect("/");
   }
 
-  console.log(user.id);
-
-  return (
-    <main className="min-h-screen bg-tc-background w-full flex flex-col items-center">
-      <GymManagementPresentational userId={user.id} />
-    </main>
-  );
+  return <GymManagementPage userId={user.id} />;
 };
 
-export default GymManagementPage;
+export default Page;
